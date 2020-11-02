@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">DouyinDownLoad</string>
+    <string name="title_activity_video_player">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_home">MainActivity</string>
+    <string name="title_home">首页</string>
+    <string name="title_dashboard">历史</string>
+    <string name="title_notifications">关于</string>
+</resources>
