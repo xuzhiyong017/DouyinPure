@@ -45,6 +45,7 @@ class HistoryFragment : Fragment() {
         recycle_view.adapter =  object : BaseQuickAdapter<SearchBean, BaseViewHolder>(R.layout.search_item_list_view) {
             override fun convert(helper: BaseViewHolder, item: SearchBean) {
                 helper.getView<TextView>(R.id.taskName).text = item.searchContent
+                helper.getView<TextView>(R.id.taskDesc).text = item.searchDesc
                 helper.itemView.setOnClickListener {
                     activity?.let { it1 -> ListTaskActivity.start(it1,item.videoId) }
                 }

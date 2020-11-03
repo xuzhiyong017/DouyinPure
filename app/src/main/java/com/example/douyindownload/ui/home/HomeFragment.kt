@@ -11,6 +11,7 @@ import com.blankj.utilcode.util.ToastUtils
 import com.example.douyindownload.R
 import com.example.douyindownload.db.DBCenter
 import com.example.douyindownload.ui.list.ListTaskActivity
+import com.example.douyindownload.ui.single.SingleVideoActivity
 import com.example.douyindownload.utils.UrlUtils
 import com.vecharm.lychee.http.core.runOnUI
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -61,18 +62,27 @@ class HomeFragment : Fragment(),CoroutineScope by MainScope() {
                 val list = RegexUtils.getMatches("((http[s]{0,1}|ftp)://[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#\$%^&*+?:_/=<>]*)?)|((www.)|[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#\$%^&*+?:_/=<>]*)?)",url)
                 if(!list.isNullOrEmpty()){
                     val text = UrlUtils.getRedirectUrl(list[0])
-                    videoId = RegexUtils.getReplaceAll(text,"/^\\/|\\/\$/g","").split("/")[6]
-                    val requestUrl = "https://www.iesdouyin.com/web/api/mix/item/list/?mix_id=${videoId}&count=10&cursor=1"
-                    if(videoId != null){
-                        if(DBCenter.db.searchDao().findSearchBeanByVideoId(videoId!!) != null){
-                            //已经存在数据了
+                    var requestUrl = text
+                    if(RegexUtils.getMatches("/mix/",text).size > 0){
+                        //解析合辑
+                        videoId = RegexUtils.getReplaceAll(text,"/^\\/|\\/\$/g","").split("/")[6]
+                        requestUrl = "https://www.iesdouyin.com/web/api/mix/item/list/?mix_id=${videoId}&count=10&cursor=1"
+                        if(videoId != null){
+                            if(DBCenter.db.searchDao().findSearchBeanByVideoId(videoId!!) != null){
+                                //已经存在数据了
 
-                        }else{
-                            homeViewModel.updateSqlDesc(videoId!!,list[0])
+                            }else{
+                                homeViewModel.updateSqlDesc(videoId!!,list[0])
 
+                            }
+                            activity?.let { ListTaskActivity.start(it,videoId!!) }
                         }
-                        activity?.let { ListTaskActivity.start(it,videoId!!) }
+                    }else{
+                        //解析单个视频
+                        videoId = RegexUtils.getReplaceAll(text,"/^\\/|\\/\$/g","").split("/")[5]
+                        activity?.let { SingleVideoActivity.start(it,videoId!!) }
                     }
+
                    runOnUI {
                        parse_txt.text = requestUrl
                    }
